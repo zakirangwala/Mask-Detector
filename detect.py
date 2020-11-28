@@ -107,3 +107,11 @@ def load_model():
     ckpt = tf.compat.v2.train.Checkpoint(model=detection_model)
     ckpt.restore(os.path.join(CHECKPOINT_PATH, 'ckpt-9')).expect_partial()
     return detection_model
+
+# Detect Function
+def detect_fn(image):
+    detection_model = load_model()
+    image, shapes = detection_model.preprocess(image)
+    prediction_dict = detection_model.predict(image, shapes)
+    detections = detection_model.postprocess(prediction_dict, shapes)
+    return detections

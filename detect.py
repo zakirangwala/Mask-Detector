@@ -94,3 +94,16 @@ def config():
     config_text = text_format.MessageToString(pipeline_config)
     with tf.io.gfile.GFile(CONFIG_PATH, "wb") as f:
         f.write(config_text)
+
+# Train Model:
+""" $ 'python Tensorflow/models/research/object_detection/model_main_tf2.py --model_dir=Tensorflow/workspace/models/my_ssd_mobnet --pipeline_config_path=Tensorflow/workspace/models/my_ssd_mobnet/pipeline.config --num_train_steps=5000'
+ """
+
+# Load Model from checkpoints
+def load_model():
+    configs = config_util.get_configs_from_pipeline_file(CONFIG_PATH)
+    detection_model = model_builder.build(
+        model_config=configs['model'], is_training=False)
+    ckpt = tf.compat.v2.train.Checkpoint(model=detection_model)
+    ckpt.restore(os.path.join(CHECKPOINT_PATH, 'ckpt-9')).expect_partial()
+    return detection_model

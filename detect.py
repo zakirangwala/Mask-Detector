@@ -26,6 +26,8 @@ CHECKPOINT_PATH = MODEL_PATH+'/my_ssd_mobnet/'
 CUSTOM_MODEL_NAME = 'my_ssd_mobnet'
 
 # Label Map
+
+
 def construct_label_map():
     labels = [{'name': 'Mask', 'id': 1}, {'name': 'NoMask', 'id': 2}]
 
@@ -37,6 +39,8 @@ def construct_label_map():
             f.write('}\n')
 
 # Convert XML files to CSV
+
+
 def xml_to_csv(path):
     xml_list = []
     for xml_file in glob.glob(path + '/*.xml'):
@@ -58,6 +62,7 @@ def xml_to_csv(path):
     xml_df = pd.DataFrame(xml_list, columns=column_name)
     return xml_df
 
+
 def convert():
     for directory in ['train', 'test']:
         image_path = f'Tensorflow/workspace/images/{directory}'
@@ -66,11 +71,14 @@ def convert():
             'Tensorflow/workspace/annotations/{}labels.csv'.format(directory), index=None)
         print('Successfully converted xml to csv.')
 
+
 # Create TF record
 """ Train : python Tensorflow/scripts/generate_tfrecord.py -x Tensorflow/workspace/images/train -l Tensorflow/workspace/annotations/label_map.pbtxt -o Tensorflow/workspace/annotations/train.record
 Test : python Tensorflow/scripts/generate_tfrecord.py -x Tensorflow/workspace/images/test -l Tensorflow/workspace/annotations/label_map.pbtxt -o Tensorflow/workspace/annotations/test.record """
 
 # Configuration
+
+
 def config():
     CONFIG_PATH = MODEL_PATH+'/'+CUSTOM_MODEL_NAME+'/pipeline.config'
     config = config_util.get_configs_from_pipeline_file(CONFIG_PATH)
@@ -95,11 +103,14 @@ def config():
     with tf.io.gfile.GFile(CONFIG_PATH, "wb") as f:
         f.write(config_text)
 
+
 # Train Model:
 """ $ 'python Tensorflow/models/research/object_detection/model_main_tf2.py --model_dir=Tensorflow/workspace/models/my_ssd_mobnet --pipeline_config_path=Tensorflow/workspace/models/my_ssd_mobnet/pipeline.config --num_train_steps=5000'
  """
 
 # Load Model from checkpoints
+
+
 def load_model():
     configs = config_util.get_configs_from_pipeline_file(CONFIG_PATH)
     detection_model = model_builder.build(
@@ -109,6 +120,8 @@ def load_model():
     return detection_model
 
 # Detect Function
+
+
 def detect_fn(image):
     detection_model = load_model()
     image, shapes = detection_model.preprocess(image)
@@ -117,6 +130,8 @@ def detect_fn(image):
     return detections
 
 # Real Time Prediction -> Video Capture
+
+
 def real_time_prediction():
     category_index = label_map_util.create_category_index_from_labelmap(
         ANNOTATION_PATH+'/label_map.pbtxt')
@@ -162,6 +177,8 @@ def real_time_prediction():
             break
 
 # Check Model --> Test Function
+
+
 def check(image):
     image_np = cv2.imread(image)
     input_tensor = tf.convert_to_tensor(

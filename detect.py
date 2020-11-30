@@ -13,6 +13,7 @@ from object_detection.utils import visualization_utils as viz_utils
 from object_detection.builders import model_builder
 from google.protobuf import text_format
 
+
 # Setup Paths
 WORKSPACE_PATH = 'Tensorflow/workspace'
 SCRIPTS_PATH = 'Tensorflow/scripts'
@@ -38,7 +39,7 @@ def construct_label_map():
             f.write('\tid:{}\n'.format(label['id']))
             f.write('}\n')
 
-# Convert XML files to CSV
+# XML TO CSV
 
 
 def xml_to_csv(path):
@@ -129,9 +130,8 @@ def detect_fn(image):
     detections = detection_model.postprocess(prediction_dict, shapes)
     return detections
 
+
 # Real Time Prediction -> Video Capture
-
-
 def real_time_prediction():
     category_index = label_map_util.create_category_index_from_labelmap(
         ANNOTATION_PATH+'/label_map.pbtxt')
@@ -165,15 +165,16 @@ def real_time_prediction():
             detections['detection_scores'],
             category_index,
             use_normalized_coordinates=True,
-            max_boxes_to_draw=5,
-            min_score_thresh=.005,
+            max_boxes_to_draw=1,
+            min_score_thresh=.001,
             agnostic_mode=False)
 
         cv2.imshow('object detection',  cv2.resize(
-            image_np_with_detections, (800, 600)))
+            image_np_with_detections, (640, 480)))
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             cap.release()
+            cv2.destroyAllWindows()
             break
 
 # Check Model --> Test Function
@@ -205,8 +206,8 @@ def check(image):
         detections['detection_scores'],
         category_index,
         use_normalized_coordinates=True,
-        max_boxes_to_draw=5,
-        min_score_thresh=0.5,
+        max_boxes_to_draw=1,
+        min_score_thresh=0.1,
         agnostic_mode=False)
 
     cv2.imwrite('Tensorflow/workspace/images/check/results/six.png',

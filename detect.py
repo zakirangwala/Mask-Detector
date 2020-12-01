@@ -17,7 +17,7 @@ from google.protobuf import text_format
 # Setup Paths
 WORKSPACE_PATH = 'Tensorflow/workspace'
 SCRIPTS_PATH = 'Tensorflow/scripts'
-APIMODEL_PATH = 'Tensorflow/models'
+APIMODEL_PATH = 'Tensorflow/tensorflow-models/models'
 ANNOTATION_PATH = WORKSPACE_PATH+'/annotations'
 IMAGE_PATH = WORKSPACE_PATH+'/images'
 MODEL_PATH = WORKSPACE_PATH+'/models'
@@ -26,7 +26,7 @@ CONFIG_PATH = MODEL_PATH+'/my_ssd_mobnet/pipeline.config'
 CHECKPOINT_PATH = MODEL_PATH+'/my_ssd_mobnet/'
 CUSTOM_MODEL_NAME = 'my_ssd_mobnet'
 
-# Label Map
+# Label Map 
 
 
 def construct_label_map():
@@ -106,7 +106,7 @@ def config():
 
 
 # Train Model:
-""" $ 'python Tensorflow/models/research/object_detection/model_main_tf2.py --model_dir=Tensorflow/workspace/models/my_ssd_mobnet --pipeline_config_path=Tensorflow/workspace/models/my_ssd_mobnet/pipeline.config --num_train_steps=5000'
+""" $ 'python Tensorflow/tensorflow-models/models/research/object_detection/model_main_tf2.py --model_dir=Tensorflow/workspace/models/my_ssd_mobnet --pipeline_config_path=Tensorflow/workspace/models/my_ssd_mobnet/pipeline.config --num_train_steps=5000'
  """
 
 # Load Model from checkpoints
@@ -117,7 +117,7 @@ def load_model():
     detection_model = model_builder.build(
         model_config=configs['model'], is_training=False)
     ckpt = tf.compat.v2.train.Checkpoint(model=detection_model)
-    ckpt.restore(os.path.join(CHECKPOINT_PATH, 'ckpt-9')).expect_partial()
+    ckpt.restore(os.path.join(CHECKPOINT_PATH, 'ckpt-1')).expect_partial()
     return detection_model
 
 # Detect Function
